@@ -13,6 +13,94 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+let projectName = inquirer.prompt([{
+    type: "input",
+    name: "projectName",
+    message: "Please enter the project name?",
+    default: "Project Name"
+}]);
+
+let addMoreMember = inquirer.prompt([
+    {
+        type: "confirm",
+        name: "addMember",
+        message: "Do you want to add members to the team?",
+        default: true
+    }
+])
+
+let memberSelected = [];
+
+while (addMoreMember.addMember) {
+    memberSelected.push(promptEmployeeDetail());
+    addMoreMember = inquirer.prompt([
+        {
+            type: "confirm",
+            name: "addMember",
+            message: "Do you want to add members to the team?",
+            default: false
+        }
+    ]);
+}
+
+function promptEmployeeDetail() {
+    let employeeDetail;
+    let employee = inquirer.prompt([
+        {
+            type: "list",
+            name: "role",
+            message: "Select the team member you want to add to project",
+            choices: ["Manager", "Engineer", "Intern"]
+        },
+        {
+            name: "employeeName",
+            message: "What's employee name?"
+        },
+        {
+            name: "employeeEmail",
+            message: "What's the employee email id?"
+        },
+        {
+            name: "employeeId",
+            message: "What's the employee id?"
+        }
+    ]);
+    let name = employee.employeeName;
+    let role = employee.role;
+    let email = employee.employeeEmail;
+    let id = employee.employeeId;
+    if (employee.role == 'Manager') {
+        let moreDetails = inquirer.prompt([
+            {
+                name: "officeNumber",
+                message: "Please provide your office number"
+            }
+        ]);
+        let officeNumber = moreDetails.officeNumber;
+        //name,id,email
+        employeeDetail = new Manager(officeNumber,name,id,email,role)
+
+    }
+    else if (employee.role == 'Engineer') {
+        let moreDetails = inquirer.prompt([{
+            name: "github",
+            message: "Provide github usename."
+        }]);
+        let github = moreDetails.github;
+        employeeDetail = new Engineer(github,name,id,email,role);
+    }
+    else {
+        let moreDetails = inquirer.prompt([{
+            name: "school",
+            message: "What's your school name?"
+        }]);
+        let school = moreDetails.school;
+        employeeDetail = new Intern(school,name,id,email,role);
+    }
+
+    return employeeDetail;
+}
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
