@@ -22,8 +22,8 @@ inquirer.prompt([{
 }]).then(async function (projectName) {
     //let addEmployee = await(askToAddEmployee());
     //while(addEmployee){
-        //memberSelected.push(await (promptEmployeeDetail()));
-        //addEmployee = await(askToAddEmployee());
+    //memberSelected.push(await (promptEmployeeDetail()));
+    //addEmployee = await(askToAddEmployee());
     //}
 
     askToAddEmployee();
@@ -58,38 +58,41 @@ function promptEmployeeDetail() {
         let email = employee.employeeEmail;
         let id = employee.employeeId;
         if (employee.role == 'Manager') {
-            let moreDetails = inquirer.prompt([
+            inquirer.prompt([
                 {
                     name: "officeNumber",
                     message: "Please provide your office number"
                 }
-            ]);
-            let officeNumber = moreDetails.officeNumber;
-            //name,id,email
-            employeeDetail = new Manager(officeNumber, name, id, email, role)
-            memberSelected.push(employeeDetail);
-            askToAddEmployee();
+            ]).then(function (moreDetails) {
+                let officeNumber = moreDetails.officeNumber;
+                //name,id,email
+                employeeDetail = new Manager(officeNumber, name, id, email, role)
+                memberSelected.push(employeeDetail);
+                askToAddEmployee();
+            });
 
         }
         else if (employee.role == 'Engineer') {
-            let moreDetails = inquirer.prompt([{
+            inquirer.prompt([{
                 name: "github",
                 message: "Provide github usename."
-            }]);
-            let github = moreDetails.github;
-            employeeDetail = new Engineer(github, name, id, email, role);
-            memberSelected.push(employeeDetail);
-            askToAddEmployee();
+            }]).then(function (moreDetails) {
+                let github = moreDetails.github;
+                employeeDetail = new Engineer(github, name, id, email, role);
+                memberSelected.push(employeeDetail);
+                askToAddEmployee();
+            });
         }
         else {
-            let moreDetails = inquirer.prompt([{
+            inquirer.prompt([{
                 name: "school",
                 message: "What's your school name?"
-            }]);
-            let school = moreDetails.school;
-            employeeDetail = new Intern(school, name, id, email, role);
-            memberSelected.push(employeeDetail);
-            askToAddEmployee();
+            }]).then(function (moreDetails) {
+                let school = moreDetails.school;
+                employeeDetail = new Intern(school, name, id, email, role);
+                memberSelected.push(employeeDetail);
+                askToAddEmployee();
+            });
         }
 
         //return employeeDetail;
@@ -97,7 +100,7 @@ function promptEmployeeDetail() {
 
 }
 
-function askToAddEmployee(){
+function askToAddEmployee() {
     inquirer.prompt([
         {
             type: "confirm",
@@ -105,9 +108,10 @@ function askToAddEmployee(){
             message: "Do you want to add members to the team?",
             default: false
         }
-    ]).then((add)=>{
+    ]).then((add) => {
         //return add.addMember;   
-        if(add.addMember){
+        if (add.addMember) {
+            console.log(add.addMember);
             promptEmployeeDetail();
         }
     });
