@@ -13,36 +13,26 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+let memberSelected = [];
 inquirer.prompt([{
     type: "input",
     name: "projectName",
     message: "Please enter the project name?",
     default: "Project Name"
-}]).then(function (projectName) {
-    inquirer.prompt([
-        {
-            type: "confirm",
-            name: "addMember",
-            message: "Do you want to add members to the team?",
-            default: true
-        }
-    ]).then(async function (addMoreMember) {
-        let memberSelected = [];
-        let addEmployee = addMoreMember.addMember;
-        while (addEmployee) {
-            let employeeSelected = await (promptEmployeeDetail());
-            console.log(employeeSelected);
-            memberSelected.push(employeeSelected.employeeDetail);
+}]).then(async function (projectName) {
+    //let addEmployee = await(askToAddEmployee());
+    //while(addEmployee){
+        //memberSelected.push(await (promptEmployeeDetail()));
+        //addEmployee = await(askToAddEmployee());
+    //}
 
-            addEmployee = await (employeeSelected.addEmployee);
-        }
-    });
+    askToAddEmployee();
 
 });
 
 
 function promptEmployeeDetail() {
-    let employeeDetail;
+    let employeeDetail = {};
     inquirer.prompt([
         {
             type: "list",
@@ -77,6 +67,8 @@ function promptEmployeeDetail() {
             let officeNumber = moreDetails.officeNumber;
             //name,id,email
             employeeDetail = new Manager(officeNumber, name, id, email, role)
+            memberSelected.push(employeeDetail);
+            askToAddEmployee();
 
         }
         else if (employee.role == 'Engineer') {
@@ -86,6 +78,8 @@ function promptEmployeeDetail() {
             }]);
             let github = moreDetails.github;
             employeeDetail = new Engineer(github, name, id, email, role);
+            memberSelected.push(employeeDetail);
+            askToAddEmployee();
         }
         else {
             let moreDetails = inquirer.prompt([{
@@ -94,24 +88,29 @@ function promptEmployeeDetail() {
             }]);
             let school = moreDetails.school;
             employeeDetail = new Intern(school, name, id, email, role);
+            memberSelected.push(employeeDetail);
+            askToAddEmployee();
         }
 
-        inquirer.prompt([
-                {
-                    type: "confirm",
-                    name: "addMember",
-                    message: "Do you want to add members to the team?",
-                    default: false
-                }
-            ]).then((add)=>{
-                return {
-                    employeeDetail : employeeDetail,
-                    addEmployee : add
-                }
-                //return employeeDetail;
-            });
+        //return employeeDetail;
     });
 
+}
+
+function askToAddEmployee(){
+    inquirer.prompt([
+        {
+            type: "confirm",
+            name: "addMember",
+            message: "Do you want to add members to the team?",
+            default: false
+        }
+    ]).then((add)=>{
+        //return add.addMember;   
+        if(add.addMember){
+            promptEmployeeDetail();
+        }
+    });
 }
 
 
