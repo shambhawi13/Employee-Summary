@@ -13,39 +13,37 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-let projectName = inquirer.prompt([{
+inquirer.prompt([{
     type: "input",
     name: "projectName",
     message: "Please enter the project name?",
     default: "Project Name"
-}]);
-
-let addMoreMember = inquirer.prompt([
-    {
-        type: "confirm",
-        name: "addMember",
-        message: "Do you want to add members to the team?",
-        default: true
-    }
-])
-
-let memberSelected = [];
-
-while (addMoreMember.addMember) {
-    memberSelected.push(promptEmployeeDetail());
-    addMoreMember = inquirer.prompt([
+}]).then(function (projectName) {
+    inquirer.prompt([
         {
             type: "confirm",
             name: "addMember",
             message: "Do you want to add members to the team?",
-            default: false
+            default: true
         }
-    ]);
-}
+    ]).then(async function (addMoreMember) {
+        let memberSelected = [];
+        let addEmployee = addMoreMember.addMember;
+        while (addEmployee) {
+            let employeeSelected = await (promptEmployeeDetail());
+            console.log(employeeSelected);
+            memberSelected.push(employeeSelected.employeeDetail);
+
+            addEmployee = await (employeeSelected.addEmployee);
+        }
+    });
+
+});
+
 
 function promptEmployeeDetail() {
     let employeeDetail;
-    let employee = inquirer.prompt([
+    inquirer.prompt([
         {
             type: "list",
             name: "role",
@@ -64,41 +62,56 @@ function promptEmployeeDetail() {
             name: "employeeId",
             message: "What's the employee id?"
         }
-    ]);
-    let name = employee.employeeName;
-    let role = employee.role;
-    let email = employee.employeeEmail;
-    let id = employee.employeeId;
-    if (employee.role == 'Manager') {
-        let moreDetails = inquirer.prompt([
-            {
-                name: "officeNumber",
-                message: "Please provide your office number"
-            }
-        ]);
-        let officeNumber = moreDetails.officeNumber;
-        //name,id,email
-        employeeDetail = new Manager(officeNumber,name,id,email,role)
+    ]).then((employee) => {
+        let name = employee.employeeName;
+        let role = employee.role;
+        let email = employee.employeeEmail;
+        let id = employee.employeeId;
+        if (employee.role == 'Manager') {
+            let moreDetails = inquirer.prompt([
+                {
+                    name: "officeNumber",
+                    message: "Please provide your office number"
+                }
+            ]);
+            let officeNumber = moreDetails.officeNumber;
+            //name,id,email
+            employeeDetail = new Manager(officeNumber, name, id, email, role)
 
-    }
-    else if (employee.role == 'Engineer') {
-        let moreDetails = inquirer.prompt([{
-            name: "github",
-            message: "Provide github usename."
-        }]);
-        let github = moreDetails.github;
-        employeeDetail = new Engineer(github,name,id,email,role);
-    }
-    else {
-        let moreDetails = inquirer.prompt([{
-            name: "school",
-            message: "What's your school name?"
-        }]);
-        let school = moreDetails.school;
-        employeeDetail = new Intern(school,name,id,email,role);
-    }
+        }
+        else if (employee.role == 'Engineer') {
+            let moreDetails = inquirer.prompt([{
+                name: "github",
+                message: "Provide github usename."
+            }]);
+            let github = moreDetails.github;
+            employeeDetail = new Engineer(github, name, id, email, role);
+        }
+        else {
+            let moreDetails = inquirer.prompt([{
+                name: "school",
+                message: "What's your school name?"
+            }]);
+            let school = moreDetails.school;
+            employeeDetail = new Intern(school, name, id, email, role);
+        }
 
-    return employeeDetail;
+        inquirer.prompt([
+                {
+                    type: "confirm",
+                    name: "addMember",
+                    message: "Do you want to add members to the team?",
+                    default: false
+                }
+            ]).then((add)=>{
+                return {
+                    employeeDetail : employeeDetail,
+                    addEmployee : add
+                }
+                //return employeeDetail;
+            });
+    });
+
 }
 
 
