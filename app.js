@@ -14,6 +14,7 @@ const render = require("./lib/htmlRenderer");
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 let memberSelected = [];
+let projectNameSelected;
 inquirer.prompt([{
     type: "input",
     name: "projectName",
@@ -25,7 +26,7 @@ inquirer.prompt([{
     //memberSelected.push(await (promptEmployeeDetail()));
     //addEmployee = await(askToAddEmployee());
     //}
-
+    projectNameSelected = projectName.projectName;
     askToAddEmployee();
 
 });
@@ -95,7 +96,6 @@ function promptEmployeeDetail() {
             });
         }
 
-        //return employeeDetail;
     });
 
 }
@@ -114,8 +114,18 @@ function askToAddEmployee() {
             console.log(add.addMember);
             promptEmployeeDetail();
         }
+        else {
+            // if no other employee needs to be added, display on output.html
+            console.log(memberSelected,projectNameSelected);
+            let htmlBlock = render(memberSelected, projectNameSelected);
+            if (fs.existsSync("output")) {
+                fs.writeFile("output/index.html", htmlBlock, function () { console.log('File successfully written.'); });
+            }
+        }
     });
 }
+
+
 
 
 // After the user has input all employees desired, call the `render` function (required
