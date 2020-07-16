@@ -17,7 +17,7 @@ Here is how the application works:
 
 ## Prerequisites
 
-- git clone git@github.com:shambhawi13/Employee-Summary.git
+- git clone https://github.com/shambhawi13/Employee-Summary.git
 - node and npm installed
 - navigate to folder where you cloned the application
 - RUN node app.js
@@ -37,7 +37,7 @@ Here is how the application works:
 
 ## Installing
 
-- Clone the repository : git clone git@github.com:shambhawi13/Employee-Summary.git 
+- Clone the repository : git clone https://github.com/shambhawi13/Employee-Summary.git 
 
 ## Authors
 
